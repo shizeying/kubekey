@@ -3,13 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - 'master'
-      - 'release*'
+      - 'master_szy'
     tags:
       - 'v*'
   pull_request:
     branches:
-      - 'master'
+      - 'master_szy'
 
 jobs:
   build:

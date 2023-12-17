@@ -321,7 +321,7 @@ spec:
       serviceAccountName: ks-installer
       containers:
       - name: installer
-        image: {{ .Repo }}/ks-installer:{{ .Tag }}
+        image: docker.io/741069229/ks-installer:{{ .Tag }}
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /etc/localtime
