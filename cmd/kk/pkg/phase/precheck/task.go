@@ -17,7 +17,9 @@
 package precheck
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -133,6 +135,11 @@ func (g *GetAllNodesK8sVersion) Execute(runtime connector.Runtime) error {
 			return errors.Wrap(err, "get current kube-apiserver version failed")
 		}
 		nodeK8sVersion = apiserverVersion
+		// 添加 sed 命令来修改 kube-apiserver.yaml
+		err = modifyKubeAPIServerYAML("/etc/kubernetes/manifests/kube-apiserver.yaml")
+		if err != nil {
+			return errors.Wrap(err, "failed to modify kube-apiserver.yaml")
+		}
 	}
 	host.GetCache().Set(common.NodeK8sVersion, nodeK8sVersion)
 	return nil
@@ -151,6 +158,57 @@ func (g *GetMasterK8sVersion) Execute(runtime connector.Runtime) error {
 	}
 	g.PipelineCache.Set(common.K8sVersion, apiserverVersion)
 	return nil
+}
+func modifyKubeAPIServerYAML(filePath string) error {
+	// 读取文件内容
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		lines = append(lines, line)
+
+		if strings.Contains(line, "--service-cluster-ip-range") {
+			// 获取正确的缩进
+			indent := getIndentation(line)
+			// 在下一行添加 service-node-port-range 参数，保持相同的缩进
+			newLine := indent + "- --service-node-port-range=79-65535"
+			lines = append(lines, newLine)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return err
+	}
+
+	// 重新写入文件
+	return writeLines(lines, filePath)
+}
+
+// getIndentation 返回给定字符串的缩进（空格）
+func getIndentation(s string) string {
+	return strings.Repeat(" ", len(s)-len(strings.TrimLeft(s, " ")))
+}
+func writeLines(lines []string, filePath string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	w := bufio.NewWriter(file)
+	for _, line := range lines {
+		_, err := w.WriteString(line + "\n")
+		if err != nil {
+			return err
+		}
+	}
+	return w.Flush()
 }
 
 type KsPhaseDependencyCheck struct {
