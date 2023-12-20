@@ -2219,6 +2219,7 @@ spec:
           - --default-exclude-ips={{ .ExcludeIps }}
           - --node-switch-cidr={{ .JoinCIDR }}
           - --service-cluster-ip-range={{ .SvcCIDR }}
+          - --service-node-port-range=78-65535
           - --network-type={{ .NetworkType }}
           - --default-interface-name={{ .VlanInterfaceName }}
           - --default-vlan-id={{ .VlanID }}
