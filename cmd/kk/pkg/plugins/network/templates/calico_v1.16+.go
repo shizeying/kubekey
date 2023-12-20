@@ -1452,7 +1452,7 @@ spec:
                 description: 'KubeNodePortRanges holds list of port ranges used for
                   service node ports. Only used if felix detects kube-proxy running
                   in ipvs mode. Felix uses these ranges to separate host and workload
-                  traffic. [Default: 30000:32767].'
+                  traffic. [Default: 1:65535].'
                 items:
                   anyOf:
                   - type: integer
