@@ -227,7 +227,7 @@ func (g *GenerateConfig) Execute(runtime connector.Runtime) error {
 	if v, ok := g.PipelineCache.Get(common.ETCDCluster); ok {
 		cluster := v.(*EtcdCluster)
 
-		cluster.peerAddresses = append(cluster.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetInternalAddress()))
+		cluster.peerAddresses = append(cluster.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetAddress()))
 		g.PipelineCache.Set(common.ETCDCluster, cluster)
 
 		if !cluster.clusterExist {
@@ -342,7 +342,7 @@ func (j *JoinMember) Execute(runtime connector.Runtime) error {
 			"export ETCDCTL_CA_FILE='/etc/ssl/etcd/ssl/ca.pem';"+
 			"%s/etcdctl --endpoints=%s member add %s %s",
 			host.GetName(), host.GetName(), common.BinDir, cluster.accessAddresses, etcdName,
-			fmt.Sprintf("https://%s:2380", host.GetInternalAddress()))
+			fmt.Sprintf("https://%s:2380", host.GetAddress()))
 
 		if _, err := runtime.GetRunner().SudoCmd(joinMemberCmd, true); err != nil {
 			return errors.Wrap(errors.WithStack(err), "add etcd member failed")
