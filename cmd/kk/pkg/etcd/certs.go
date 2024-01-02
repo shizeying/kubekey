@@ -203,9 +203,13 @@ func GenerateAltName(k *common.KubeConf, runtime *connector.Runtime) *cert.AltNa
 
 	for _, host := range k.Cluster.Hosts {
 		dnsList = append(dnsList, host.Name)
-		internalAddress := netutils.ParseIPSloppy(host.Address)
+		internalAddress := netutils.ParseIPSloppy(host.InternalAddress)
 		if internalAddress != nil {
 			ipList = append(ipList, internalAddress)
+		}
+		address := netutils.ParseIPSloppy(host.Address)
+		if address != nil {
+			ipList = append(ipList, address)
 		}
 	}
 
