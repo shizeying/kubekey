@@ -84,12 +84,12 @@ func (g *GetStatus) Execute(runtime connector.Runtime) error {
 
 		if v, ok := g.PipelineCache.Get(common.ETCDCluster); ok {
 			c := v.(*EtcdCluster)
-			c.peerAddresses = append(c.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetInternalAddress()))
+			c.peerAddresses = append(c.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetAddress()))
 			c.clusterExist = true
 			// type: *EtcdCluster
 			g.PipelineCache.Set(common.ETCDCluster, c)
 		} else {
-			cluster.peerAddresses = append(cluster.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetInternalAddress()))
+			cluster.peerAddresses = append(cluster.peerAddresses, fmt.Sprintf("%s=https://%s:2380", etcdName, host.GetAddress()))
 			cluster.clusterExist = true
 			g.PipelineCache.Set(common.ETCDCluster, cluster)
 		}
@@ -169,7 +169,7 @@ type GenerateAccessAddress struct {
 func (g *GenerateAccessAddress) Execute(runtime connector.Runtime) error {
 	var addrList []string
 	for _, host := range runtime.GetHostsByRole(common.ETCD) {
-		addrList = append(addrList, fmt.Sprintf("https://%s:2379", host.GetInternalAddress()))
+		addrList = append(addrList, fmt.Sprintf("https://%s:2379", host.GetAddress()))
 	}
 
 	accessAddresses := strings.Join(addrList, ",")
@@ -312,6 +312,7 @@ func refreshConfig(KubeConf *common.KubeConf, runtime connector.Runtime, endpoin
 			"MaxWals":             KubeConf.Cluster.Etcd.MaxWals,
 			"ElectionTimeout":     KubeConf.Cluster.Etcd.ElectionTimeout,
 			"HeartbeatInterval":   KubeConf.Cluster.Etcd.HeartbeatInterval,
+			"Address":             host.GetAddress(),
 		},
 	}
 
@@ -375,7 +376,7 @@ func (c *CheckMember) Execute(runtime connector.Runtime) error {
 		if err != nil {
 			return errors.Wrap(errors.WithStack(err), "list etcd member failed")
 		}
-		if !strings.Contains(memberList, fmt.Sprintf("https://%s:2379", host.GetInternalAddress())) {
+		if !strings.Contains(memberList, fmt.Sprintf("https://%s:2379", host.GetAddress())) {
 			return errors.Wrap(errors.WithStack(err), "add etcd member failed")
 		}
 	} else {
@@ -405,7 +406,7 @@ func (b *BackupETCD) Execute(runtime connector.Runtime) error {
 		Dst:      filepath.Join(b.KubeConf.Cluster.Etcd.BackupScriptDir, "etcd-backup.sh"),
 		Data: util.Data{
 			"Hostname":            runtime.RemoteHost().GetName(),
-			"Etcdendpoint":        fmt.Sprintf("https://%s:2379", runtime.RemoteHost().GetInternalAddress()),
+			"Etcdendpoint":        fmt.Sprintf("https://%s:2379", runtime.RemoteHost().GetAddress()),
 			"Backupdir":           b.KubeConf.Cluster.Etcd.BackupDir,
 			"KeepbackupNumber":    b.KubeConf.Cluster.Etcd.KeepBackupNumber + 1,
 			"EtcdBackupScriptDir": b.KubeConf.Cluster.Etcd.BackupScriptDir,

@@ -29,8 +29,8 @@ ETCD_DATA_DIR={{ .DataDir }}
 {{- else }}
 ETCD_DATA_DIR=/var/lib/etcd
 {{- end }}
-ETCD_ADVERTISE_CLIENT_URLS=https://{{ .Ip }}:2379
-ETCD_INITIAL_ADVERTISE_PEER_URLS=https://{{ .Ip }}:2380
+ETCD_ADVERTISE_CLIENT_URLS=https://{{ .Address }}:2379
+ETCD_INITIAL_ADVERTISE_PEER_URLS=https://{{ .Address }}:2380
 ETCD_INITIAL_CLUSTER_STATE={{ .State }}
 ETCD_METRICS=basic
 ETCD_LISTEN_CLIENT_URLS=https://{{ .Ip }}:2379,https://{{ .Ip }}:2379
@@ -94,7 +94,7 @@ ETCD_PEER_KEY_FILE=/etc/ssl/etcd/ssl/member-{{ .Hostname }}-key.pem
 ETCD_PEER_CLIENT_CERT_AUTH=True
 
 # CLI settings
-ETCDCTL_ENDPOINTS=https://{{ .Ip }}:2379
+ETCDCTL_ENDPOINTS=https://{{ .Address }}:2379
 ETCDCTL_CA_FILE=/etc/ssl/etcd/ssl/ca.pem
 ETCDCTL_KEY_FILE=/etc/ssl/etcd/ssl/admin-{{ .Hostname }}-key.pem
 ETCDCTL_CERT_FILE=/etc/ssl/etcd/ssl/admin-{{ .Hostname }}.pem
