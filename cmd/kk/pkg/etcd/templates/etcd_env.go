@@ -33,7 +33,7 @@ ETCD_ADVERTISE_CLIENT_URLS=https://{{ .Ip }}:2379
 ETCD_INITIAL_ADVERTISE_PEER_URLS=https://{{ .Ip }}:2380
 ETCD_INITIAL_CLUSTER_STATE={{ .State }}
 ETCD_METRICS=basic
-ETCD_LISTEN_CLIENT_URLS=https://{{ .Ip }}:2379,https://127.0.0.1:2379
+ETCD_LISTEN_CLIENT_URLS=https://{{ .Ip }}:2379,https:/{{ .Ip }}:2379
 ETCD_INITIAL_CLUSTER_TOKEN=k8s_etcd
 ETCD_LISTEN_PEER_URLS=https://{{ .Ip }}:2380
 ETCD_NAME={{ .Name }}
@@ -94,7 +94,7 @@ ETCD_PEER_KEY_FILE=/etc/ssl/etcd/ssl/member-{{ .Hostname }}-key.pem
 ETCD_PEER_CLIENT_CERT_AUTH=True
 
 # CLI settings
-ETCDCTL_ENDPOINTS=https://127.0.0.1:2379
+ETCDCTL_ENDPOINTS=https://{{ .Ip }}:2379
 ETCDCTL_CA_FILE=/etc/ssl/etcd/ssl/ca.pem
 ETCDCTL_KEY_FILE=/etc/ssl/etcd/ssl/admin-{{ .Hostname }}-key.pem
 ETCDCTL_CERT_FILE=/etc/ssl/etcd/ssl/admin-{{ .Hostname }}.pem
