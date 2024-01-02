@@ -312,6 +312,7 @@ func refreshConfig(KubeConf *common.KubeConf, runtime connector.Runtime, endpoin
 			"MaxWals":             KubeConf.Cluster.Etcd.MaxWals,
 			"ElectionTimeout":     KubeConf.Cluster.Etcd.ElectionTimeout,
 			"HeartbeatInterval":   KubeConf.Cluster.Etcd.HeartbeatInterval,
+			"Address":             host.GetAddress(),
 		},
 	}
 
