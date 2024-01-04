@@ -224,7 +224,7 @@ func GenerateHosts(runtime connector.ModuleRuntime, kubeConf *common.KubeConf) [
 	for _, host := range runtime.GetAllHosts() {
 		if host.GetName() != "" {
 			hostsList = append(hostsList, fmt.Sprintf("%s  %s.%s %s",
-				host.GetInternalAddress(),
+				host.GetAddress(),
 				host.GetName(),
 				kubeConf.Cluster.Kubernetes.ClusterName,
 				host.GetName()))

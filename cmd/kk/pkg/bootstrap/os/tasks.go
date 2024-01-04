@@ -518,7 +518,7 @@ func (n *NodeConfigureNtpServer) Execute(runtime connector.Runtime) error {
 		// use internal ip to client chronyd server
 		for _, host := range runtime.GetAllHosts() {
 			if serverAddr == host.GetName() {
-				serverAddr = host.GetInternalAddress()
+				serverAddr = host.GetAddress()
 				break
 			}
 		}

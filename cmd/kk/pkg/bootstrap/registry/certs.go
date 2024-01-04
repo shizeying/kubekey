@@ -107,6 +107,10 @@ func (g *GenerateCerts) Execute(runtime connector.Runtime) error {
 
 	dnsList := []string{"localhost", g.KubeConf.Cluster.Registry.PrivateRegistry, runtime.GetHostsByRole(common.Registry)[0].GetName()}
 	ipList := []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback, netutils.ParseIPSloppy(runtime.GetHostsByRole(common.Registry)[0].GetInternalAddress())}
+	address := netutils.ParseIPSloppy(runtime.GetHostsByRole(common.Registry)[0].GetAddress())
+	if address != nil {
+		ipList = append(ipList, address)
+	}
 
 	altName.DNSNames = dnsList
 	altName.IPs = ipList
