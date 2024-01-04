@@ -253,7 +253,7 @@ func (g *GenerateK8eServiceEnv) Execute(runtime connector.Runtime) error {
 		}
 	default:
 		for _, node := range runtime.GetHostsByRole(common.ETCD) {
-			endpoint := fmt.Sprintf("https://%s:%s", node.GetInternalAddress(), kubekeyapiv1alpha2.DefaultEtcdPort)
+			endpoint := fmt.Sprintf("https://%s:%s", node.GetAddress(), kubekeyapiv1alpha2.DefaultEtcdPort)
 			endpointsList = append(endpointsList, endpoint)
 		}
 		externalEtcd.Endpoints = endpointsList
