@@ -203,7 +203,7 @@ func (g *GenerateK8eService) Execute(runtime connector.Runtime) error {
 		Data: util.Data{
 			"Server":            server,
 			"IsMaster":          host.IsRole(common.Master),
-			"NodeIP":            host.GetAddress(),
+			"NodeIP":            host.GetInternalAddress(),
 			"HostName":          host.GetName(),
 			"PodSubnet":         g.KubeConf.Cluster.Network.KubePodsCIDR,
 			"ServiceSubnet":     g.KubeConf.Cluster.Network.KubeServiceCIDR,
