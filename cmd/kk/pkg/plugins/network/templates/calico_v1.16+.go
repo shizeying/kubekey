@@ -4813,10 +4813,6 @@ spec:
               name: kubernetes-services-endpoint
               optional: true
           env:
-            - name: PUBLIC_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.labels['public-ip']
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
               value: "kubernetes"
@@ -4849,9 +4845,9 @@ spec:
             - name: NODEIP
               valueFrom:
                 fieldRef:
-                  fieldPath: status.hostIP
+                  fieldPath: metadata.labels['public-ip']
             - name: IP_AUTODETECTION_METHOD
-              value: "can-reach=$(PUBLIC_IP)"
+              value: "can-reach=$(NODEIP)"
             - name: IP
               value: "autodetect"
             # Enable IPIP
