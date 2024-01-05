@@ -4851,7 +4851,7 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: IP_AUTODETECTION_METHOD
-              value: "can-reach=$(NODEIP)"
+              value: "can-reach=$(PUBLIC_IP)"
             - name: IP
               value: "autodetect"
             # Enable IPIP
