@@ -191,7 +191,7 @@ func (g *GenerateKubeletEnv) Execute(runtime connector.Runtime) error {
 		Template: templates.KubeletEnv,
 		Dst:      filepath.Join("/etc/systemd/system/kubelet.service.d", templates.KubeletEnv.Name()),
 		Data: util.Data{
-			"NodeIP":           host.GetAddress(),
+			"NodeIP":           host.GetInternalAddress(),
 			"Hostname":         host.GetName(),
 			"ContainerRuntime": "",
 			"KubeletArgs":      g.KubeConf.Cluster.Kubernetes.KubeletArgs,
