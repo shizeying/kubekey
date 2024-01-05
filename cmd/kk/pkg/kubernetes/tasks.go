@@ -412,6 +412,11 @@ func (a *AddWorkerLabel) Execute(runtime connector.Runtime) error {
 				host.GetName()), true); err != nil {
 				return errors.Wrap(errors.WithStack(err), "add worker label failed")
 			}
+			if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
+				"/usr/local/bin/kubectl label --overwrite node %s  public-ip=%s",
+				host.GetName(), host.GetAddress()), true); err != nil {
+				return errors.Wrap(errors.WithStack(err), "add worker label failed")
+			}
 		}
 	}
 
@@ -1020,6 +1025,11 @@ func (c *ConfigureKubernetes) Execute(runtime connector.Runtime) error {
 			_, err := runtime.GetRunner().SudoCmd(labelCmd, true)
 			if err != nil {
 				return err
+			}
+			if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
+				"/usr/local/bin/kubectl label --overwrite node %s  public-ip=%s",
+				hosts[j].GetName(), hosts[j].GetAddress()), true); err != nil {
+				return errors.Wrap(errors.WithStack(err), "add worker label failed")
 			}
 		}
 	}

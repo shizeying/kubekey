@@ -357,6 +357,11 @@ func (a *AddMasterTaint) Execute(runtime connector.Runtime) error {
 	cmd := fmt.Sprintf(
 		"/usr/local/bin/kubectl taint nodes %s node-role.kubernetes.io/master=effect:NoSchedule --overwrite",
 		host.GetName())
+	if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
+		"/usr/local/bin/kubectl label --overwrite node %s  public-ip=%s",
+		host.GetName(), host.GetAddress()), true); err != nil {
+		return errors.Wrap(errors.WithStack(err), "add worker label failed")
+	}
 
 	if _, err := runtime.GetRunner().SudoCmd(cmd, false); err != nil {
 		return errors.Wrap(errors.WithStack(err), "add master NoSchedule taint failed")
@@ -374,6 +379,11 @@ func (a *AddWorkerLabel) Execute(runtime connector.Runtime) error {
 			if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
 				"/usr/local/bin/kubectl label --overwrite node %s node-role.kubernetes.io/worker=",
 				host.GetName()), true); err != nil {
+				return errors.Wrap(errors.WithStack(err), "add worker label failed")
+			}
+			if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
+				"/usr/local/bin/kubectl label --overwrite node %s  public-ip=%s",
+				host.GetName(), host.GetAddress()), true); err != nil {
 				return errors.Wrap(errors.WithStack(err), "add worker label failed")
 			}
 		}
