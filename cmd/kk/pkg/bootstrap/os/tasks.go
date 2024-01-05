@@ -508,7 +508,7 @@ func (n *NodeConfigureNtpServer) Execute(runtime connector.Runtime) error {
 	for _, server := range n.KubeConf.Cluster.System.NtpServers {
 
 		serverAddr := strings.Trim(server, " \"")
-		if serverAddr == currentHost.GetName() || serverAddr == currentHost.GetInternalAddress() {
+		if serverAddr == currentHost.GetName() || serverAddr == currentHost.GetInternalAddress() || serverAddr == currentHost.GetAddress() {
 			allowClientCmd := fmt.Sprintf(`sed -i '/#allow/ a\allow 0.0.0.0/0' %s`, chronyConfigFile)
 			if _, err := runtime.GetRunner().SudoCmd(allowClientCmd, false); err != nil {
 				return errors.Wrapf(err, "change host:%s chronyd conf failed, please check file %s", serverAddr, chronyConfigFile)

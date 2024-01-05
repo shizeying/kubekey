@@ -36,7 +36,7 @@ func (n *NodeInCluster) PreCheck(runtime connector.Runtime) (bool, error) {
 		if res, ok := cluster.NodesInfo[host.GetName()]; ok && res != "" {
 			versionOk = true
 		}
-		_, ipOk := cluster.NodesInfo[host.GetInternalAddress()]
+		_, ipOk := cluster.NodesInfo[host.GetAddress()]
 		if n.Not {
 			return !(versionOk || ipOk), nil
 		}
