@@ -80,7 +80,7 @@ type UpdateK3s struct {
 }
 
 func (u *UpdateK3s) Execute(runtime connector.Runtime) error {
-	if _, err := runtime.GetRunner().SudoCmd("sed -i 's#--server=.*\"#--server=https://127.0.0.1:%s\"#g' /etc/systemd/system/k3s.service", false); err != nil {
+	if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf("sed -i 's#--server=.*\"#--server=https://%s:%s\"#g' /etc/systemd/system/k3s.service", runtime.RemoteHost().GetAddress(), strconv.Itoa(u.KubeConf.Cluster.ControlPlaneEndpoint.Port)), false); err != nil {
 		return err
 	}
 	if _, err := runtime.GetRunner().SudoCmd("systemctl restart k3s", false); err != nil {
@@ -95,8 +95,8 @@ type UpdateKubelet struct {
 
 func (u *UpdateKubelet) Execute(runtime connector.Runtime) error {
 	if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
-		"sed -i 's#server:.*#server: https://127.0.0.1:%s#g' /etc/kubernetes/kubelet.conf",
-		strconv.Itoa(u.KubeConf.Cluster.ControlPlaneEndpoint.Port)), false); err != nil {
+		"sed -i 's#server:.*#server: https://%s:%s#g' /etc/kubernetes/kubelet.conf",
+		runtime.RemoteHost().GetAddress(), strconv.Itoa(u.KubeConf.Cluster.ControlPlaneEndpoint.Port)), false); err != nil {
 		return err
 	}
 	if _, err := runtime.GetRunner().SudoCmd("systemctl daemon-reload && systemctl restart kubelet", false); err != nil {
@@ -113,8 +113,8 @@ func (u *UpdateKubeProxy) Execute(runtime connector.Runtime) error {
 	if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
 		"set -o pipefail "+
 			"&& /usr/local/bin/kubectl --kubeconfig /etc/kubernetes/admin.conf get configmap kube-proxy -n kube-system -o yaml "+
-			"| sed 's#server:.*#server: https://127.0.0.1:%s#g' "+
-			"| /usr/local/bin/kubectl --kubeconfig /etc/kubernetes/admin.conf replace -f -",
+			"| sed 's#server:.*#server: https://%s:%s#g' "+
+			"| /usr/local/bin/kubectl --kubeconfig /etc/kubernetes/admin.conf replace -f -", runtime.RemoteHost().GetAddress(),
 		strconv.Itoa(u.KubeConf.Cluster.ControlPlaneEndpoint.Port)), false); err != nil {
 		return err
 	}
@@ -310,13 +310,13 @@ func (g *DeleteVIP) Execute(runtime connector.Runtime) error {
 	if !ok {
 		return errors.New("get interface failed")
 	}
-	
+
 	address := host.GetAddress()
 	internalAddress := host.GetInternalAddress()
 	if address == g.KubeConf.Cluster.ControlPlaneEndpoint.Address || internalAddress == g.KubeConf.Cluster.ControlPlaneEndpoint.Address {
 		return nil
 	}
-	
+
 	cmd := fmt.Sprintf("ip addr del %s dev %s", g.KubeConf.Cluster.ControlPlaneEndpoint.Address, interfaceName)
 	runtime.GetRunner().SudoCmd(cmd, false)
 	return nil
