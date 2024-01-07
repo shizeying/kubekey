@@ -4424,7 +4424,7 @@ spec:
               value: "can-reach=$(NODEIP)"
             # Auto-detect the BGP IP address.
             - name: IP
-              value: "autodetect"
+              value: "$(NODEIP)"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "Always"

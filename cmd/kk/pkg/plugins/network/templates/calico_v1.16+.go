@@ -4849,7 +4849,7 @@ spec:
             - name: IP_AUTODETECTION_METHOD
               value: "can-reach=$(NODEIP)"
             - name: IP
-              value: "autodetect"
+              value: "$(NODEIP)"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "{{ .IPIPMode }}"
