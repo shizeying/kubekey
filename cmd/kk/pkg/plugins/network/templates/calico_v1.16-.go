@@ -831,9 +831,9 @@ spec:
                 fieldRef:
                   fieldPath: metadata.labels['public-ip']
             - name: IP_AUTODETECTION_METHOD
-              value: "can-reach=$(NODEIP)"
+              value: "can-reach=158.179.193.171"
             - name: IP
-              value: "$(NODEIP)"
+              value: "158.179.193.171"
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "{{ .IPIPMode }}"
